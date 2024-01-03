@@ -29,19 +29,19 @@ See our paper H.M.N. Dilum Bandara, Mark Staples, and Sidra Malik, "Designing fo
 Tested on Python 3.8.7
 
 ### Configuration parameters
-Set following configuration values on `config.ini` (if unsure start with default values of values from Yu et al.):
-* alpha - Type I error weight
-* beta - Type II error weight
-* population_size - Initial population size
-* offspring_size - Number of offsprings to generate
-* p_c - Crossover probability
-* p_m - Mutation probability
-* generation_limit - No of generation cycles to try
-* generation_limit_without_improvement - Stop if this many consecutive generations show no improvement
-* cluster_can_have_read_only_elements - Can a square cluster have real-only elements/parties?
-* cluster_can_have_partial_bus - Can a bus have a subset of rows and columns filled?
-* cluster_can_have_partial_sink - Can a sink have a subset of column filled?
-* cluster_can_have_partial_source - Can a source have a subset of row filled?
+Set following configuration values on `config.ini` (if unsure start with default values from Yu et al.):
+* 'alpha' - Type I error weight
+* 'beta' - Type II error weight
+* 'population_size' - Initial population size
+* 'offspring_size' - Number of offsprings to generate
+* 'p_c' - Crossover probability
+* 'p_m' - Mutation probability
+* 'generation_limit' - No of generation cycles to try
+* 'generation_limit_without_improvement' - Stop if this many consecutive generations show no improvement
+* 'cluster_can_have_read_only_elements' - Can a square cluster have real-only elements/parties?
+* 'cluster_can_have_partial_bus' - Can a bus have a subset of rows and columns filled?
+* 'cluster_can_have_partial_sink' - Can a sink have a subset of column filled?
+* 'cluster_can_have_partial_source' - Can a source have a subset of row filled?
 
 Typical values from Yu et al. [1]:
 * Population size = 3000
@@ -56,7 +56,7 @@ Typical values from Yu et al. [1]:
 If number of clusters (n_c) is not decided, a typical value could be 1/2 n_n
 
 ### Input File Format
-DSM and DMM files should be in CSV format. A DSM file should have following format:
+DSM and DMM files should be in CSV format. A DSM file should have the following format:
 * List of labels starting with a comma to indicate an empty cell, e.g., `,C,D,E,A,B`
 * Keep diagonals empty
 * From row 2 onwards 1st value must be a label
@@ -64,13 +64,13 @@ DSM and DMM files should be in CSV format. A DSM file should have following form
 * Use `0`, `o`, `O`, or empty cell to indicate the absence of a relationship
 
 A DMM file should have the following format:
-* Data must be in rows while parties must be in columns.
+* Data must be in rows while parties must be in columns (just an assumption).
 * List of party labels starting with a comma to indicate an empty cell, e.g., `,P2,P1,P3,P5,P4`
 * From row 2 onwards 1st value must be a data label
 * Use `1`, `x`, or `X` to indicate the presence of a relationship
 * Use `0`, `o`, `O`, or empty cell to indicate the absence of a relationship
 
-Sample input DSM and DMM files are provided.
+Sample input [DSM](dsm.csv) and [DMM](dmm.csv) files are provided. Also, DSMs and DMMs from our paper can be found in [DSMs_DMMs_from_paper](DSMs_DMMs_from_paper) folder.
 
 ### Command-line Arguments
 Set following command-line arguments (some are optional, and if not provided default values are used):
