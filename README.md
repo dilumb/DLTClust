@@ -30,18 +30,18 @@ Tested on Python 3.8.7
 
 ### Configuration parameters
 Set following configuration values on `config.ini` (if unsure start with default values from Yu et al.):
-* 'alpha' - Type I error weight
-* 'beta' - Type II error weight
-* 'population_size' - Initial population size
-* 'offspring_size' - Number of offsprings to generate
-* 'p_c' - Crossover probability
-* 'p_m' - Mutation probability
-* 'generation_limit' - No of generation cycles to try
-* 'generation_limit_without_improvement' - Stop if this many consecutive generations show no improvement
-* 'cluster_can_have_read_only_elements' - Can a square cluster have real-only elements/parties?
-* 'cluster_can_have_partial_bus' - Can a bus have a subset of rows and columns filled?
-* 'cluster_can_have_partial_sink' - Can a sink have a subset of column filled?
-* 'cluster_can_have_partial_source' - Can a source have a subset of row filled?
+* `alpha` - Type I error weight
+* `beta` - Type II error weight
+* `population_size` - Initial population size
+* `offspring_size` - Number of offsprings to generate
+* `p_c` - Crossover probability
+* `p_m` - Mutation probability
+* `generation_limit` - No of generation cycles to try
+* `generation_limit_without_improvement` - Stop if this many consecutive generations show no improvement
+* `cluster_can_have_read_only_elements` - Can a square cluster have real-only elements/parties?
+* `cluster_can_have_partial_bus` - Can a bus have a subset of rows and columns filled?
+* `cluster_can_have_partial_sink` - Can a sink have a subset of column filled?
+* `cluster_can_have_partial_source` - Can a source have a subset of row filled?
 
 Typical values from Yu et al. [1]:
 * Population size = 3000
