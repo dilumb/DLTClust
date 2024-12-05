@@ -110,8 +110,8 @@ class TestDMM(unittest.TestCase):
         self.assertEqual(dmm._DMM__build_D_dash(chrom), 22)
         self.assertEqual(dmm.D_dash, D_dash)
 
-    def test_calculate_MDL_value(self):
-        """ Test calculate_MDL_value method """
+    def test_calculate_MDL(self):
+        """ Test calculate_MDL method """
         num_clusters = 3
 
         dmm = DMM(INPUT_FILE_NAME, OUTPUT_FILE_NAME, num_clusters, ALPHA, BETA, POPULATION_SIZE,
@@ -121,19 +121,19 @@ class TestDMM(unittest.TestCase):
                  0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         self.assertAlmostEqual(
-            dmm._DMM__calculate_MDL_value(chrom), 33.26542859)
+            dmm._DMM__calculate_MDL(chrom)[0], 33.26542859)
 
         chrom = [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
                  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         self.assertAlmostEqual(
-            dmm._DMM__calculate_MDL_value(chrom), 25.44339874)
+            dmm._DMM__calculate_MDL(chrom)[0], 25.44339874)
 
         chrom = [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         self.assertAlmostEqual(
-            dmm._DMM__calculate_MDL_value(chrom), 49.05894502)
+            dmm._DMM__calculate_MDL(chrom)[0], 49.05894502)
 
     def test_fitness(self):
         """ Test fitness method """
@@ -153,16 +153,16 @@ class TestDMM(unittest.TestCase):
                   1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         chrom = [[chrom1, 0.0], [chrom2, 0.0], [chrom3, 0.0]]
 
-        result = [[chrom1, 33.26542859], [
-            chrom2, 25.44339874], [chrom3, 49.05894502]]
+        result = [[chrom1, (33.26542859, 0, 0)], [
+            chrom2, (25.44339874, 0, 0)], [chrom3, (49.05894502, 0, 0)]]
         res = dmm._DMM__fitness(chrom)
         self.assertEqual(len(res), len(result))
         self.assertEqual(res[0][0], result[0][0])
         self.assertEqual(res[1][0], result[1][0])
         self.assertEqual(res[2][0], result[2][0])
-        self.assertAlmostEqual(res[0][1], result[0][1])
-        self.assertAlmostEqual(res[1][1], result[1][1])
-        self.assertAlmostEqual(res[2][1], result[2][1])
+        self.assertAlmostEqual(res[0][1][0], result[0][1][0])
+        self.assertAlmostEqual(res[1][1][0], result[1][1][0])
+        self.assertAlmostEqual(res[2][1][0], result[2][1][0])
 
     def test_save_matrix(self):
         """ Test save_matrix method """
@@ -171,19 +171,19 @@ class TestDMM(unittest.TestCase):
         dmm = DMM(INPUT_FILE_NAME, OUTPUT_FILE_NAME, num_clusters, ALPHA, BETA, POPULATION_SIZE,
                   OFFSPRING_SIZE, P_C, P_M, GENERATION_LIMIT, GENERATION_LIMIT_WITHOUT_IMPROVEMENT)
 
-        dmm.clusters = [[['D2', 'P2'], ['D2', 'P1'], ['D2', 'P3'], ['D2', 'P5'], ['D3', 'P2'], \
+        dmm.clusters = [[['D2', 'P2'], ['D2', 'P1'], ['D2', 'P3'], ['D2', 'P5'], ['D3', 'P2'],
                          ['D3', 'P1'], ['D3', 'P3'], ['D3', 'P5']],
                         [['D1', 'P4'], ['D2', 'P4'], ['D6', 'P4'], ['D7', 'P4'], ['D3', 'P4']]]
         dmm.D_out_header_column = ['P2', 'P1', 'P3', 'P5', 'P4']
         dmm.D_out_header_row = ['D2', 'D3', 'D1', 'D2', 'D6', 'D7', 'D3']
         dmm.D_out = [['x', 'x', 'x', 'x', ''],
-                    ['x', 'x', 'x', 'x', ''],
-                    ['', '', '', '', 'x'],
-                    ['', '', '', '', 'x'],
-                    ['', '', '', '', 'x'],
-                    ['', '', '', '', 'x'],
-                    ['', '', '', '', 'x']]
-        dmm._DMM__save_matrix(25.44339874)
+                     ['x', 'x', 'x', 'x', ''],
+                     ['', '', '', '', 'x'],
+                     ['', '', '', '', 'x'],
+                     ['', '', '', '', 'x'],
+                     ['', '', '', '', 'x'],
+                     ['', '', '', '', 'x']]
+        dmm._DMM__save_matrix((25.44339874, 1, 2))
 
     def test_add_cluster_to_matrix(self):
         """ Test add_cluster_to_matrix method """
@@ -194,9 +194,9 @@ class TestDMM(unittest.TestCase):
 
         chrom = [[[2, 0], [2, 1], [2, 2], [2, 3], [6, 0], [6, 1], [6, 2], [6, 3]],
                  [[0, 3], [2, 3], [3, 3], [5, 3], [6, 3]]]
-        clusters = [[['D2', 'P2'], ['D2', 'P1'], ['D2', 'P3'], ['D2', 'P5'], \
+        clusters = [[['D2', 'P2'], ['D2', 'P1'], ['D2', 'P3'], ['D2', 'P5'],
                      ['D3', 'P2'], ['D3', 'P1'], ['D3', 'P3'], ['D3', 'P5']],
-                    [['D1', 'P5'], ['D2', 'P5'], ['D6', 'P5'], ['D7', 'P5'], \
+                    [['D1', 'P5'], ['D2', 'P5'], ['D6', 'P5'], ['D7', 'P5'],
                      ['D3', 'P5']]]
         header_row = ['D2', 'D3', 'D1', 'D2', 'D6', 'D7', 'D3']
         header_column = ['P2', 'P1', 'P3', 'P5', 'P5']
@@ -217,12 +217,12 @@ class TestDMM(unittest.TestCase):
         self.assertEqual(dmm.D_out_start_idx_column, 5)
 
         D_out = [['x', 'x', 'x', 'x', ''],
-                ['x', 'x', 'x', 'x', ''],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x']]
+                 ['x', 'x', 'x', 'x', ''],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
     def test_build_clustered_DMM(self):
@@ -237,12 +237,12 @@ class TestDMM(unittest.TestCase):
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         dmm._DMM__build_clustered_DMM(chrom)
         D_out = [['x', 'x', 'x', 'x', ''],
-                ['x', 'x', 'x', 'x', ''],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x']]
+                 ['x', 'x', 'x', 'x', ''],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
         dmm.D_out_start_idx_row = 0
@@ -256,12 +256,12 @@ class TestDMM(unittest.TestCase):
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         dmm._DMM__build_clustered_DMM(chrom)
         D_out = [['x', 'x', 'x', 'x', ''],
-                ['x', 'x', 'x', 'x', ''],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x']]
+                 ['x', 'x', 'x', 'x', ''],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
         dmm.D_out_start_idx_row = 0
@@ -275,12 +275,12 @@ class TestDMM(unittest.TestCase):
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         dmm._DMM__build_clustered_DMM(chrom)
         D_out = [['x', 'x', 'x', 'x', ''],
-                ['x', 'x', 'x', 'x', ''],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x'],
-                ['', '', '', '', 'x']]
+                 ['x', 'x', 'x', 'x', ''],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x'],
+                 ['', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
         dmm.D_out_start_idx_row = 0
@@ -294,14 +294,14 @@ class TestDMM(unittest.TestCase):
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         dmm._DMM__build_clustered_DMM(chrom)
         D_out = [['x', '', '', '', '', ''],
-                ['x', '', '', '', '', ''],
-                ['', 'x', 'x', 'x', 'x', ''],
-                ['', 'x', 'x', 'x', 'x', ''],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x']]
+                 ['x', '', '', '', '', ''],
+                 ['', 'x', 'x', 'x', 'x', ''],
+                 ['', 'x', 'x', 'x', 'x', ''],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
         dmm.D_out_start_idx_row = 0
@@ -315,15 +315,15 @@ class TestDMM(unittest.TestCase):
                  1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1]
         dmm._DMM__build_clustered_DMM(chrom)
         D_out = [['x', 'x', 'x', 'x', '', ''],
-                ['x', 'x', 'x', 'x', '', ''],
-                ['', '', '', '', 'x', ''],
-                ['', '', '', '', 'x', ''],
-                ['', '', '', '', 'x', ''],
-                ['', '', '', '', 'x', ''],
-                ['', '', '', '', 'x', ''],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x'],
-                ['', '', '', '', '', 'x']]
+                 ['x', 'x', 'x', 'x', '', ''],
+                 ['', '', '', '', 'x', ''],
+                 ['', '', '', '', 'x', ''],
+                 ['', '', '', '', 'x', ''],
+                 ['', '', '', '', 'x', ''],
+                 ['', '', '', '', 'x', ''],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x'],
+                 ['', '', '', '', '', 'x']]
         self.assertEqual(dmm.D_out, D_out)
 
 

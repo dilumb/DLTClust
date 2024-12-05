@@ -1,10 +1,9 @@
 """Module providing DSM class."""
-from typing import List, Tuple
 from operator import itemgetter
 from src.mdl import MDL
 from src.bea import BEA
 import src.ga as ga
-from src.datatypes import Chromosome, Matrix, Population, ClusterNames, Clusters, ClusterType, MatrixOut
+from src.datatypes import Chromosome, Matrix, Population, ClusterNames, Clusters, ClusterType, MatrixOut, Fitness
 
 
 class DSM:
@@ -111,10 +110,10 @@ class DSM:
 
         self.clusters: ClusterNames = []
         self.D_out: MatrixOut = []
-        self.D_out_header: List[str] = []
+        self.D_out_header: list[str] = []
         self.D_out_start_idx = 0
         self.CA: Matrix = []
-        self.CA_header: List[str] = []
+        self.CA_header: list[str] = []
 
     def __read_DSM(self, file_name: str):
         """
@@ -182,21 +181,21 @@ class DSM:
             self.D_dash = []
             raise ValueError(
                 "No of rows and columns in DSM must match.")
-        for i in range(len(self.row_names)):
-            if self.row_names[i] != self.column_names[i]:
-                self.D = []
-                self.D_dash = []
-                raise ValueError(
-                    "Row and column order in DSM must match.")
+
+        if self.row_names != self.column_names:
+            self.D = []
+            self.D_dash = []
+            raise ValueError(
+                "Row and column order in DSM must match.")
         print(f"Read DSM with {n} rows and {m-1} columns")
 
-    def __all_pairs(self, given_list: List[int]) -> List[Chromosome]:
+    def __all_pairs(self, given_list: list[int]) -> list[Chromosome]:
         """
         Given a list of items, generate list of all pairs of items
 
         Parameters
         ----------
-        given_list : List[int]
+        given_list : list[int]
             List of items
 
         Returns
@@ -243,7 +242,7 @@ class DSM:
                 for p in pairs:
                     # Check for clusters with read-only objects/parties
                     if (not self.cluster_can_have_read_only_elements) or \
-                        (self.D[p[0]][p[1]] == 1 and self.D[p[1]][p[0]] == 1):
+                            (self.D[p[0]][p[1]] == 1 and self.D[p[1]][p[0]] == 1):
                         self.D_dash[p[0]][p[1]] = 1
                         self.D_dash[p[1]][p[0]] = 1
                     else:
@@ -359,7 +358,7 @@ class DSM:
 
         return num_objects_in_all_clusters
 
-    def __calculate_MDL_value(self, chromosome: Chromosome) -> float:
+    def __calculate_MDL(self, chromosome: Chromosome) -> Fitness:
         """
         Calculate MDL metric as per Eq. 3.
 
@@ -370,8 +369,8 @@ class DSM:
 
         Returns
         -------
-        float
-            MDL metric value
+        Fitness
+            MDL metric value, no of type I errors, no of type II errors
         """
         # Build D' matrix
         sum_c_i = self.__build_D_dash(chromosome)
@@ -389,7 +388,8 @@ class DSM:
                     num_type_1_errors += 1
                 else:
                     num_type_2_errors += 1
-        return self.mdl.value(sum_c_i, num_type_1_errors, num_type_2_errors)
+        value = self.mdl.value(sum_c_i, num_type_1_errors, num_type_2_errors)
+        return (value, num_type_1_errors, num_type_2_errors)
 
     def __fitness(self, chromosomes: Population) -> Population:
         """
@@ -405,10 +405,10 @@ class DSM:
         Population
             List of (chromosome, fitness value) pairs
         """
-
-        for i in range(len(chromosomes)):
-            chromosomes[i][1] = self.__calculate_MDL_value(chromosomes[i][0])
-        return chromosomes
+        chromosomes_with_fitness = []
+        for c in chromosomes:
+            chromosomes_with_fitness.append((c[0], self.__calculate_MDL(c[0])))
+        return chromosomes_with_fitness
 
     def cluster(self):
         """
@@ -422,6 +422,7 @@ class DSM:
         population = ga.generate_population(
             self.population_size, chromosome_len)
         population = self.__fitness(population)
+        next_generation: Population = []
 
         for i in range(self.generation_limit):
             # Step 2 - Generate offsprings
@@ -510,7 +511,7 @@ class DSM:
             sinks,
             sources)
 
-    def __cleanup_clusters(self, clusters: Clusters) -> Tuple[Clusters, Clusters]:
+    def __cleanup_clusters(self, clusters: Clusters) -> tuple[Clusters, Clusters]:
         """
         Cleanup square clusters by removing completely overlapping clusters.
         Then identify clusters that overlap and not. Sort each set by number
@@ -681,17 +682,19 @@ class DSM:
                 raise TypeError("Unknown cluster type")
         self.D_out_start_idx = end_idx
 
-    def __save_clustered_matrix(self, fitness: float):
+    def __save_clustered_matrix(self, fitness: Fitness):
         """
         Save the cluster configuration and clustered DSM to a CSV file
 
         Parameters
         ----------
-        fitness : float
-            Fitness score of the chromosome
+        Fitness
+            Fitness score of the chromosome, No of Type I errors, No of Type II errors
         """
         with open(self.output_file_name, 'w+', encoding="utf-8") as fd:
-            fd.write(f'Fitness score,{fitness}\n')
+            fd.write(f'Fitness score,{fitness[0]}\n')
+            fd.write(f'Type I errors,{fitness[1]}\n')
+            fd.write(f'Type II errors,{fitness[2]}\n')
             print(f'Fitness score:\t{fitness}')
 
             fd.write('\nClusters\n')
@@ -758,7 +761,7 @@ class DSM:
 
         # Make resulting cluster ready to dump to a CSV. CA is in column order
         for i in range(self.n):
-            row: List = []
+            row: list = []
             for j in range(self.n):
                 if i == j:  # Clean up diagonal
                     row.append('.')

@@ -311,8 +311,8 @@ class TestDSM(unittest.TestCase):
         self.assertEqual(dsm._DSM__build_D_dash(chrom5), 5)
         self.assertEqual(dsm.D_dash, d_dash8)
 
-    def test_calculate_MDL_value(self):
-        """ Test calculate_MDL_value method """
+    def test_calculate_MDL(self):
+        """ Test calculate_MDL method """
         num_square_clusters = 2
         num_busses = 1
         num_sinks = 0
@@ -325,19 +325,19 @@ class TestDSM(unittest.TestCase):
 
         chrom = [1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 1.452598216)
+            dsm._DSM__calculate_MDL(chrom)[0], 1.452598216)
 
         chrom = [1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0]
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 56.60081719)
+            dsm._DSM__calculate_MDL(chrom)[0], 56.60081719)
 
         chrom = [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 28.754345540)
+            dsm._DSM__calculate_MDL(chrom)[0], 28.754345540)
 
         chrom = [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 20.837144077)
+            dsm._DSM__calculate_MDL(chrom)[0], 20.837144077)
 
     def test_fitness(self):
         """ Test fitness method """
@@ -357,18 +357,18 @@ class TestDSM(unittest.TestCase):
         chrom4 = [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         chrom = [[chrom1, 0.0], [chrom2, 0.0], [chrom3, 0.0], [chrom4, 0.0]]
 
-        result = [[chrom1, 1.452598216], [chrom2, 56.60081719],
-                  [chrom3, 28.754345540], [chrom4, 20.837144077]]
+        result = [[chrom1, (1.452598216, 0, 0)], [chrom2, (56.60081719, 0, 0)],
+                  [chrom3, (28.754345540, 0, 0)], [chrom4, (20.837144077, 0, 0)]]
         res = dsm._DSM__fitness(chrom)
         self.assertEqual(len(res), len(result))
         self.assertEqual(res[0][0], result[0][0])
         self.assertEqual(res[1][0], result[1][0])
         self.assertEqual(res[2][0], result[2][0])
         self.assertEqual(res[3][0], result[3][0])
-        self.assertAlmostEqual(res[0][1], result[0][1])
-        self.assertAlmostEqual(res[1][1], result[1][1])
-        self.assertAlmostEqual(res[2][1], result[2][1])
-        self.assertAlmostEqual(res[3][1], result[3][1])
+        self.assertAlmostEqual(res[0][1][0], result[0][1][0])
+        self.assertAlmostEqual(res[1][1][0], result[1][1][0])
+        self.assertAlmostEqual(res[2][1][0], result[2][1][0])
+        self.assertAlmostEqual(res[3][1][0], result[3][1][0])
 
     def test_no_busses(self):
         """ Test no_busses method """
@@ -389,13 +389,13 @@ class TestDSM(unittest.TestCase):
         self.assertEqual(dsm.D_dash, d_dash)
 
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 1.452598216)
+            dsm._DSM__calculate_MDL(chrom)[0], 1.452598216)
 
         chrom = [1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
         self.assertEqual(dsm.D_dash, d_dash)
 
         self.assertAlmostEqual(
-            dsm._DSM__calculate_MDL_value(chrom), 2.6965041203)
+            dsm._DSM__calculate_MDL(chrom)[0], 2.6965041203)
 
     def test_save_clustered_matrix(self):
         """ Test save_clustered_matrix method """
@@ -424,7 +424,7 @@ class TestDSM(unittest.TestCase):
                      ['', '', '', '', '', '', '', '', 'x', '.', 'x', 'x'],
                      ['', '', '', '', '', '', '', '', 'x', 'x', '.', 'x'],
                      ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', '.']]
-        dsm._DSM__save_clustered_matrix(1.567)
+        dsm._DSM__save_clustered_matrix((1.567, 1, 2))
 
     def test_add_cluster_to_matrix(self):
         """ Test add_cluster_to_matrix method """

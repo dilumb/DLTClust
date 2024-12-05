@@ -1,7 +1,6 @@
 """Module providing Bond Energy Algorithm (BEA) class."""
 import copy
 import math
-from typing import List
 from src.datatypes import Matrix, Clusters
 
 
@@ -26,14 +25,14 @@ class BEA:
     @author: Dilum Bandara
     """
 
-    def __init__(self, AA: Matrix, column_names: List, clusters: Clusters):
+    def __init__(self, AA: Matrix, column_names: list, clusters: Clusters):
         """
         Parameters
         ----------
         AA : Matrix
             Input DSM Matrix to rearrange
             Term AA is used from [3] to make it easier to follow algorithm
-        column_names : List
+        column_names : list
             List of column names of input matrix
         clusters : Clusters
             List of clusters.
@@ -268,7 +267,7 @@ class BEA:
 
         # Order rows and their names according to relative ordering of columns
         self.__order_rows()
-        new_column_names: List = []
+        new_column_names: list = []
         for i in self.__column_order:
             new_column_names.append(self.column_names[i])
         self.column_names = new_column_names

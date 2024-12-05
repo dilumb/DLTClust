@@ -1,9 +1,9 @@
 """Module providing DMM class."""
-from typing import List
 from operator import itemgetter
 from src.mdl import MDL
 import src.ga as ga
-from src.datatypes import Chromosome, Matrix, Population, ClusterNames, MatrixOut
+from src.datatypes import Chromosome, Matrix, Population, ClusterNames, MatrixOut, Fitness
+
 
 class DMM:
     """
@@ -70,8 +70,8 @@ class DMM:
 
         self.clusters: ClusterNames = []
         self.D_out: MatrixOut = []
-        self.D_out_header_row: List[str] = []
-        self.D_out_header_column: List[str] = []
+        self.D_out_header_row: list[str] = []
+        self.D_out_header_column: list[str] = []
         self.D_out_start_idx_row = 0
         self.D_out_start_idx_column = 0
 
@@ -139,15 +139,15 @@ class DMM:
             self.num_points = len(self.points)
             fd.close()
 
-    def __all_pairs(self, rows: List[int], columns: List[int]) -> List[Chromosome]:
+    def __all_pairs(self, rows: list[int], columns: list[int]) -> list[Chromosome]:
         """
         Given 2 lists generate list of all pairs of items
 
         Parameters
         ----------
-        rows : List[int]
+        rows : list[int]
             List of rows
-        columns : List[int]
+        columns : list[int]
             List of columns
 
         Returns
@@ -155,7 +155,7 @@ class DMM:
         Chromosome
             List of all pairs of items
         """
-        pairs: List[Chromosome] = []
+        pairs: list[Chromosome] = []
         for i in rows:
             for j in columns:
                 pairs.append([i, j])
@@ -212,7 +212,7 @@ class DMM:
 
         return num_objects_in_all_clusters
 
-    def __calculate_MDL_value(self, chromosome: Chromosome) -> float:
+    def __calculate_MDL(self, chromosome: Chromosome) -> Fitness:
         """
         Calculate MDL metric as per Eq. 3.
 
@@ -223,8 +223,8 @@ class DMM:
 
         Returns
         -------
-        float
-            MDL metric value
+        Fitness
+            MDL metric value, no of type I errors, no of type II errors
         """
         # Build D' matrix
         sum_c_i = self.__build_D_dash(chromosome)
@@ -242,7 +242,8 @@ class DMM:
                 else:
                     num_type_2_errors += 1
 
-        return self.mdl.value(sum_c_i, num_type_1_errors, num_type_2_errors)
+        value = self.mdl.value(sum_c_i, num_type_1_errors, num_type_2_errors)
+        return (value, num_type_1_errors, num_type_2_errors)
 
     def __fitness(self, chromosomes: Population) -> Population:
         """
@@ -258,10 +259,10 @@ class DMM:
         Population
             List of (chromosome, fitness value) pairs
         """
-
-        for i in range(len(chromosomes)):
-            chromosomes[i][1] = self.__calculate_MDL_value(chromosomes[i][0])
-        return chromosomes
+        chromosomes_with_fitness = []
+        for c in chromosomes:
+            chromosomes_with_fitness.append((c[0], self.__calculate_MDL(c[0])))
+        return chromosomes_with_fitness
 
     def cluster(self):
         """
@@ -274,6 +275,7 @@ class DMM:
         population = ga.generate_population(
             self.population_size, chromosome_len)
         population = self.__fitness(population)
+        next_generation: Population = []
 
         for i in range(self.generation_limit):
             # Step 2 - Generate offspring
@@ -315,7 +317,7 @@ class DMM:
         """
         # Create the list of clusters. Also, count no of points in a cluster
         # and no of items a point appears in clusters
-        #TODO refactor code to reduce statements, variable, and branches
+        # TODO refactor code to reduce statements, variable, and branches
         clusters = []
         num_points = len(self.points)
         overlap_count = [0] * num_points
@@ -461,17 +463,19 @@ class DMM:
         self.D_out_start_idx_row = row_end_idx
         self.D_out_start_idx_column = column_end_idx
 
-    def __save_matrix(self, fitness: float):
+    def __save_matrix(self, fitness: Fitness):
         """
         Save the cluster configuration and clustered DMM to a CSV file
 
         Parameters
         ----------
-        fitness : float
-            Fitness score of the chromosome
+        Fitness
+            Fitness score of the chromosome, No of Type I errors, No of Type II errors
         """
         with open(self.output_file_name, 'w+', encoding="utf-8") as fd:
-            fd.write(f'Fitness score,{fitness}\n')
+            fd.write(f'Fitness score,{fitness[0]}\n')
+            fd.write(f'Type I errors,{fitness[1]}\n')
+            fd.write(f'Type II errors,{fitness[2]}\n')
             print(f'Fitness score:\t{fitness}')
 
             fd.write('\nClusters\n')
@@ -486,6 +490,6 @@ class DMM:
 
             for i in range(len(self.D_out)):
                 fd.write(self.D_out_header_row[i] + ',' +
-                        ','.join(self.D_out[i]) + '\n')
+                         ','.join(self.D_out[i]) + '\n')
 
             fd.close()

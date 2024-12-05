@@ -1,14 +1,14 @@
 """Module providing datatype definitions."""
-from typing import List, Tuple
 from enum import Enum
 from collections import namedtuple
 
-type Matrix = List[List[int]]
-type MatrixOut = List[List[str]]
-type ClusterNames = List[List[str]]
-type Chromosome = List[int]
-type Population = List[Tuple[Chromosome, float]]
-type Clusters = List[Tuple[Chromosome, int]]
+type Matrix = list[list[int]]
+type MatrixOut = list[list[str]]
+type ClusterNames = list[tuple[str, list[str]]]
+type Fitness = tuple[float, int, int]
+type Chromosome = list[int]
+type Population = list[tuple[Chromosome, Fitness]]
+type Clusters = list[tuple[Chromosome, int]]
 
 Config = namedtuple(
     'Config', ['alpha', 'beta', 'population_size', 'offspring_size',

@@ -25,7 +25,7 @@ class TestMDL(unittest.TestCase):
         self.assertEqual(len(population), 5)
         self.assertEqual(len(population[0]), 2)
         self.assertEqual(len(population[0][0]), 9)
-        self.assertAlmostEqual(population[0][1], -1.0)
+        self.assertAlmostEqual(population[0][1], (-1.0, 0, 0))
 
     def test_selection_pair(self):
         """ Test selection_pair function """
@@ -34,8 +34,8 @@ class TestMDL(unittest.TestCase):
         self.assertEqual(len(selection), 2)
         self.assertEqual(len(selection[0][0]), 9)
         self.assertEqual(len(selection[1][0]), 9)
-        self.assertEqual(selection[0][1], -1.0)
-        self.assertEqual(selection[1][1], -1.0)
+        self.assertEqual(selection[0][1], (-1.0, 0, 0))
+        self.assertEqual(selection[1][1], (-1.0, 0, 0))
 
     def test_uniform_crossover(self):
         """ Test uniform_crossover function """
@@ -59,7 +59,7 @@ class TestMDL(unittest.TestCase):
         next_generation = ga.crossover(population, 6, 0.4)
         self.assertEqual(len(next_generation), 6)
         self.assertEqual(len(next_generation[0][0]), 9)
-        self.assertEqual(next_generation[0][1], -1.0)
+        self.assertEqual(next_generation[0][1], (-1.0, 0, 0))
 
     def test_mutate(self):
         """ Test mutate function """
@@ -67,7 +67,7 @@ class TestMDL(unittest.TestCase):
         next_generation = ga.mutate(population, 0.25)
         self.assertEqual(len(next_generation), 7)
         self.assertEqual(len(next_generation[0][0]), 9)
-        self.assertEqual(next_generation[0][1], -1.0)
+        self.assertEqual(next_generation[0][1], (-1.0, 0, 0))
 
     def test_is_next_generation_same(self):
         """ Test is_next_generation_same function """

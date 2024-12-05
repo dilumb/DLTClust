@@ -8,6 +8,7 @@ from random import random, sample, choices
 import copy
 from src.datatypes import Chromosome, Population
 
+
 def generate_chromosome(length: int) -> Chromosome:
     """
     Generate a chromosome
@@ -32,7 +33,7 @@ def generate_population(population_size: int, chromosome_len: int) -> Population
     chromosome_len : int
         Length of chromosome
     """
-    return [[generate_chromosome(chromosome_len), -1.0] for _ in range(population_size)]
+    return [[generate_chromosome(chromosome_len), (-1, 0, 0)] for _ in range(population_size)]
 
 
 def selection_pair(population: Population) -> Population:
