@@ -3,7 +3,7 @@ from typing import List
 from operator import itemgetter
 from src.mdl import MDL
 import src.ga as ga
-from src.datatypes import Chromosome, Matrix, Population, ClusterNames
+from src.datatypes import Chromosome, Matrix, Population, ClusterNames, MatrixOut
 
 class DMM:
     """
@@ -69,7 +69,7 @@ class DMM:
         self.generation_limit_without_improvement = generation_limit_without_improvement
 
         self.clusters: ClusterNames = []
-        self.D_out: Matrix = []
+        self.D_out: MatrixOut = []
         self.D_out_header_row: List[str] = []
         self.D_out_header_column: List[str] = []
         self.D_out_start_idx_row = 0
@@ -113,8 +113,8 @@ class DMM:
                     continue
 
                 if m != len(line_splitted):
-                    self.D = None
-                    self.D_dash = None
+                    self.D = []
+                    self.D_dash = []
                     fd.close()
                     raise ValueError("No of columns not same across rows")
 
@@ -131,15 +131,15 @@ class DMM:
                         self.D_dash[n].append(0)
                         self.points.append([n, i - 1])
                     else:
-                        self.D = None
-                        self.D_dash = None
+                        self.D = []
+                        self.D_dash = []
                         raise ValueError(
                             f"Invalid element {line_splitted[i]} in DMM")
                 n += 1
             self.num_points = len(self.points)
             fd.close()
 
-    def __all_pairs(self, rows: List[int], columns: List[int]) -> Chromosome:
+    def __all_pairs(self, rows: List[int], columns: List[int]) -> List[Chromosome]:
         """
         Given 2 lists generate list of all pairs of items
 
@@ -155,7 +155,7 @@ class DMM:
         Chromosome
             List of all pairs of items
         """
-        pairs: Matrix = []
+        pairs: List[Chromosome] = []
         for i in rows:
             for j in columns:
                 pairs.append([i, j])
@@ -198,7 +198,7 @@ class DMM:
             row_unique_values = list(set(row_index_in_D))
             column_unique_values = list(set(column_index_in_D))
 
-            # A single row (or part of a it) is not a valid cluster. So penalise
+            # A single row (or part of a it) is not a valid cluster. So penalize
             # this chromosome by expanding cluster by adding adjacent rows
             # Round up if first or last raw
             if (len(row_unique_values)) == 1:
@@ -438,8 +438,8 @@ class DMM:
         for p in cluster:
             row_indexes.append(p[0])
             column_indexes.append(p[1])
-        row_unique_indexes = set(row_indexes)
-        column_unique_indexes = set(column_indexes)
+        row_unique_indexes = list(set(row_indexes))
+        column_unique_indexes = list(set(column_indexes))
 
         for r in row_unique_indexes:
             self.D_out_header_row.append(self.row_names[r])

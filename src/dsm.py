@@ -4,7 +4,7 @@ from operator import itemgetter
 from src.mdl import MDL
 from src.bea import BEA
 import src.ga as ga
-from src.datatypes import Chromosome, Matrix, Population, ClusterNames, Clusters, ClusterType
+from src.datatypes import Chromosome, Matrix, Population, ClusterNames, Clusters, ClusterType, MatrixOut
 
 
 class DSM:
@@ -110,7 +110,7 @@ class DSM:
         self.cluster_can_have_partial_source = cluster_can_have_partial_source
 
         self.clusters: ClusterNames = []
-        self.D_out: Matrix = []
+        self.D_out: MatrixOut = []
         self.D_out_header: List[str] = []
         self.D_out_start_idx = 0
         self.CA: Matrix = []
@@ -151,8 +151,8 @@ class DSM:
                     continue
 
                 if m != len(line_splitted):
-                    self.D = None
-                    self.D_dash = None
+                    self.D = []
+                    self.D_dash = []
                     fd.close()
                     raise ValueError("No of columns not same across rows")
 
@@ -168,8 +168,8 @@ class DSM:
                         self.D[n].append(1)
                         self.D_dash[n].append(0)
                     else:
-                        self.D = None
-                        self.D_dash = None
+                        self.D = []
+                        self.D_dash = []
                         fd.close()
                         raise ValueError(
                             f"Invalid object {line_splitted[i]} in DSM")
@@ -178,19 +178,19 @@ class DSM:
 
         # For a DSM, row and column names and order must match
         if len(self.row_names) != len(self.column_names):
-            self.D = None
-            self.D_dash = None
+            self.D = []
+            self.D_dash = []
             raise ValueError(
                 "No of rows and columns in DSM must match.")
         for i in range(len(self.row_names)):
             if self.row_names[i] != self.column_names[i]:
-                self.D = None
-                self.D_dash = None
+                self.D = []
+                self.D_dash = []
                 raise ValueError(
                     "Row and column order in DSM must match.")
         print(f"Read DSM with {n} rows and {m-1} columns")
 
-    def __all_pairs(self, given_list: List[int]) -> Chromosome:
+    def __all_pairs(self, given_list: List[int]) -> List[Chromosome]:
         """
         Given a list of items, generate list of all pairs of items
 

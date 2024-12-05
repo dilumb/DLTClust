@@ -1,0 +1,7 @@
+# Custom Dictionary Words
+Bandara
+Clust
+Dilum
+nonoverlapping
+subcluster
+Yassine

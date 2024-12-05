@@ -8,7 +8,7 @@ from src.datatypes import Matrix, Clusters
 class BEA:
     """
     Customized version of Bond Energy Algorithm (BEA) [1] to get DSM unclustered
-    items closer. While DMS is an asymmetric matrix, we assume it be symmetric
+    items closer. While DSM is an asymmetric matrix, we assume it be symmetric
     to preserve the property of decomposability, i.e., rows’ and
     the columns’ contributions to the overall optimization function are easily
     decomposed additively, so that the search for the best column
@@ -43,7 +43,7 @@ class BEA:
         self.n = len(AA)
         self.AA: Matrix = AA
         self.column_names = column_names
-        self.clusters = clusters
+        self.clusters: Clusters = clusters
         self.CA: Matrix = []
         self.__column_order = []
 
@@ -68,7 +68,7 @@ class BEA:
             total += self.CA[i][k] * self.CA[j][k]
         return total
 
-    def __cont(self, i: int, k: int, j: int) -> int:
+    def __cont(self, i: int, k: int, j: int) -> float:
         """
         Calculate contribution to the global affinity measure when column k
         is placed between columns i and j
