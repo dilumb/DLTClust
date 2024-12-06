@@ -1,6 +1,7 @@
 """Module providing a set of utility functions."""
 import configparser
 from src.datatypes import Config
+from src.dsm import DSM
 
 
 def str_2_bool(value: str):
@@ -64,3 +65,19 @@ def build_config(file_name: str):
             ga_cfg['cluster_can_have_partial_sink']),
         cluster_can_have_partial_source=str_2_bool(
             ga_cfg['cluster_can_have_partial_source']))
+
+
+def dsm_to_graph(dsm: DSM, file_name: str):
+    """
+    Generate Neo4j Cypher query to represent DSM as a graph
+    """
+    with open(file_name, 'w', encoding="utf-8") as file:
+        file.write('CREATE\n')
+        for n in dsm.column_names:
+            file.write(f"({n}:Party {{name: '{n}'}}),\n")
+        for i in range(dsm.n):
+            for j in range(dsm.n):
+                if dsm.D[i][j] == 1:
+                    file.write(
+                        f"({dsm.column_names[i]})-[:WRITE]->({dsm.column_names[j]}),\n")
+        file.write(';\n')

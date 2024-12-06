@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from src.dsm import DSM
 from src.dmm import DMM
-from src.util import build_config
+from src.util import build_config, dsm_to_graph
 
 if __name__ == '__main__':
     startTime = datetime.now()
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rnd', type=int,
                         help='Random seed', default=123)
     parser.add_argument('-t', '--type', type=str,
-                        help='Type DSM or DMM', default='DSM')
+                        help='Type DSM, DSM2Graph or DMM', default='DSM')
     parser.add_argument('-u', '--sources', type=int,
                         help='No of sources/writers', default=0)
     args = parser.parse_args()
@@ -63,6 +63,28 @@ if __name__ == '__main__':
                   config.cluster_can_have_partial_sink,
                   config.cluster_can_have_partial_source)
         dsm.cluster()
+
+    # DSM to graph
+    elif args.type == 'DSM2Graph':
+        dsm = DSM(args.input,
+                  args.output,
+                  args.clusters,
+                  args.busses,
+                  args.sinks,
+                  args.sources,
+                  config.alpha,
+                  config.beta,
+                  config.population_size,
+                  config.offspring_size,
+                  config.p_c,
+                  config.p_m,
+                  config.num_iterations_max,
+                  config.num_iterations_without_improvement,
+                  config.cluster_can_have_read_only_elements,
+                  config.cluster_can_have_partial_bus,
+                  config.cluster_can_have_partial_sink,
+                  config.cluster_can_have_partial_source)
+        dsm_to_graph(dsm, './dsm_to_graph.txt')
 
     # DMM clustering
     elif args.type == 'DMM':
