@@ -26,7 +26,7 @@ Party-party and party-data relationships should be encoded as binary Design Stru
 See our paper H.M.N. Dilum Bandara, Mark Staples, and Sidra Malik, "Designing for Shared Ledgers in Industry Ecosystems", URL for more details #TODO
 
 ## How to Use
-Tested on Python 3.8.7
+Tested on Python 3.12.4
 
 ### Configuration parameters
 Set following configuration values on `config.ini` (if unsure start with default values from Yu et al.):

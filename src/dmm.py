@@ -92,8 +92,8 @@ class DMM:
             File name to read matrix
         """
         is_first_line = True
-        self.column_names = []
-        self.row_names = []
+        self.column_names: list[str] = []
+        self.row_names: list[str] = []
         self.points: Matrix = []    # Track marked points
         self.D: Matrix = []
         self.D_dash: Matrix = []
