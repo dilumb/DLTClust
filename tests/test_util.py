@@ -46,13 +46,3 @@ class TestUtil(unittest.TestCase):
                   POPULATION_SIZE, OFFSPRING_SIZE, P_C, P_M, GENERATION_LIMIT,
                   GENERATION_LIMIT_WITHOUT_IMPROVEMENT)
         util.dsm_to_graph(dsm, './dsm_to_graph.txt')
-
-    def test_build_chromosome(self):
-        names = ['A', 'B', 'C', 'D', 'E', 'F']
-        clusters = [['C', 'B', 'A'], ['D', 'E'], ['F', 'E']]
-        num_clusters = 4
-        c = util.build_chromosome(clusters, names, num_clusters)
-        self.assertEqual(len(c), 24)
-        expected_c = [1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-                      1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0]
-        self.assertEqual(c, expected_c)

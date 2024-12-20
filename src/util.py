@@ -83,25 +83,10 @@ def dsm_to_graph(dsm: DSM, file_name: str):
             for j in range(dsm.n):
                 if dsm.D[i][j] == 1:
                     file.write(
-                        f"({dsm.column_names[i]})-[:WRITE {{weight: {1/row_sum}}}]->({dsm.column_names[j]}),\n")
+                        # f"({dsm.column_names[i]})-[:WRITE {{weight: {1/row_sum}}}]->({dsm.column_names[j]}),\n")
+                        f"('{dsm.column_names[i]}','{dsm.column_names[j]}', {{'weight': {1/row_sum}}}),\n")
+
             file.write(
-                f"({dsm.column_names[i]})-[:WRITE {{weight: {1/row_sum}}}]->({dsm.column_names[i]}),\n")
+                # f"({dsm.column_names[i]})-[:WRITE {{weight: {1/row_sum}}}]->({dsm.column_names[i]}),\n")
+                f"('{dsm.column_names[i]}','{dsm.column_names[i]}', {{'weight': {1/row_sum}}}),\n")
         file.write(';\n')
-
-
-def build_chromosome(clusters: list[list[str]], names: list[str], num_clusters: int) -> Chromosome:
-    """
-    Generate a chromosome to reflect the given cluster membership
-    """
-    n = len(names)
-    chromosome = [0 for i in range(n*num_clusters)]
-    row_idx = 0
-    for c in clusters:
-        for m in c:
-            try:
-                column_idx = names.index(m)
-                chromosome[row_idx*n + column_idx] = 1
-            except ValueError:
-                print("That item does not exist")
-        row_idx += 1
-    return chromosome

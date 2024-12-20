@@ -391,6 +391,25 @@ class DSM:
         value = self.mdl.value(sum_c_i, num_type_1_errors, num_type_2_errors)
         return (value, num_type_1_errors, num_type_2_errors)
 
+    def stats(self, clusters: list[list[str]]) -> Fitness:
+        """
+        Calculate MDL statistics of given chromosome
+
+        Parameters
+        ----------
+        clusters: list[list[str]]
+            Cluster membership
+
+        Returns
+        -------
+
+        Fitness
+        MDL metric value, no of type I errors, no of type II errors
+        """
+        chrom = ga.build_chromosome(
+            clusters, self.column_names, self.num_clusters)
+        return self.__calculate_MDL(chrom)
+
     def __fitness(self, chromosomes: Population) -> Population:
         """
         Calculate fitness score based on MDL principle for given set of chromosomes

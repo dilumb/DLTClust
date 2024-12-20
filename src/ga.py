@@ -152,3 +152,21 @@ def is_next_generation_same(
             if population[i][0][k] != next_generation[i][0][k]:
                 return False
     return True
+
+
+def build_chromosome(clusters: list[list[str]], names: list[str], num_clusters: int) -> Chromosome:
+    """
+    Generate a chromosome to reflect the given cluster membership
+    """
+    n = len(names)
+    chromosome = [0 for i in range(n*num_clusters)]
+    row_idx = 0
+    for c in clusters:
+        for m in c:
+            try:
+                column_idx = names.index(m)
+                chromosome[row_idx*n + column_idx] = 1
+            except ValueError:
+                print("That item does not exist")
+        row_idx += 1
+    return chromosome

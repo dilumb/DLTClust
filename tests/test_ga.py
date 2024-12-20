@@ -78,6 +78,16 @@ class TestMDL(unittest.TestCase):
         self.assertFalse(ga.is_next_generation_same(
             population_before, next_generation, 9))
 
+    def test_build_chromosome(self):
+        names = ['A', 'B', 'C', 'D', 'E', 'F']
+        clusters = [['C', 'B', 'A'], ['D', 'E'], ['F', 'E']]
+        num_clusters = 4
+        c = ga.build_chromosome(clusters, names, num_clusters)
+        self.assertEqual(len(c), 24)
+        expected_c = [1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
+                      1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0]
+        self.assertEqual(c, expected_c)
+
 
 if __name__ == '__main__':
     unittest.main()
