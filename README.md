@@ -26,7 +26,6 @@ Party-party and party-data relationships should be encoded as binary Design Stru
 See our paper H.M.N. Dilum Bandara, Mark Staples, and Sidra Malik, "Designing for Shared Ledgers in Industry Ecosystems", URL for more details #TODO
 
 ## How to Use
-Tested on Python 3.12.4
 
 ### Configuration parameters
 Set following configuration values on `config.ini` (if unsure start with default values from Yu et al.):
@@ -76,7 +75,9 @@ Sample input [DSM](dsm.csv) and [DMM](dmm.csv) files are provided. Also, DSMs an
 Set following command-line arguments (some are optional, and if not provided default values are used):
 * `-b`, `--busses` - No of busses to generate (integer). Optional (default is `0`)
 * `-c`, `--clusters` -  No of square clusters to generate (integer). Compulsory
+* `-e`, `--test` -  Type of test statistics. Either `DSM2Graph` or `Stat`
 * `-i`, `--input` - Input matrix file to cluster (DSM or DMM). It should be a CSV file in given format (see example). Optional (default is `dsm.csv`)
+* `-m`, `--members` - Find test statistics for given cluster membership
 * `-o`, `--output` - Output matrix file name. Optional (default is `clusters.csv`)
 * `-p`, `--params` - Config file with parameters. Optional (default is `config.ini`)
 * `-u`, `--sources` - No of sources (aka writers) to generate (integer). Optional (default is `0`)
@@ -90,6 +91,8 @@ To cluster the sample DSM use the following command:
 
 `python3 DLTClust -c 2`
 
+Clustering results will be saved as a `.csv` file and square clusters (to see overlapping membership) will be saved to a `.png` file.
+
 Use the following command to cluster one of the example DSMs from the paper to get up to 4 square clusters, a data bus, sink, and source while setting the random seed to 123:
 
 `python3 DLTClust -c 4 -b 1 -u 1 -s 1 -r 123 -i DLTClust/DSMs_DMMs_from_paper/DSM_single_party_instance_supply_chain.csv`
@@ -101,6 +104,13 @@ To cluster the sample DMM use the following command:
 
 Use the following command to cluster one of the example DMMs from the paper to get up to 5 clusters while setting the random seed to 999:
 `python3 DLTClust -c 5 -r 999 -i dltclust/DSMs_DMMs_from_paper/DMM_BCDFI.csv -t DMM`
+
+## Install
+Tested on Python 3.13.1
+
+`pip install -r requirements.txt`
+
+Alternatively, you may create a Python environment and install the dependencies.
 
 ## Unit Tests
 `python3 -m unittest discover DLTClust`

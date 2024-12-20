@@ -30,10 +30,10 @@ if __name__ == '__main__':
                         help='Output matrix file', default=MOD_PATH + '/clusters.csv')
     parser.add_argument('-p', '--params', type=str,
                         help='Config file with parameters', default=MOD_PATH + '/config.ini')
-    parser.add_argument('-s', '--sinks', type=int,
-                        help='No of sinks/readers', default=0)
     parser.add_argument('-r', '--rnd', type=int,
                         help='Random seed', default=123)
+    parser.add_argument('-s', '--sinks', type=int,
+                        help='No of sinks/readers', default=0)
     parser.add_argument('-t', '--type', type=str,
                         help='Type DSM or DMM', default='DSM')
     parser.add_argument('-u', '--sources', type=int,
