@@ -1,7 +1,9 @@
 """Module providing a set of utility functions."""
 import configparser
-from src.datatypes import Config, Chromosome
-from src.dsm import DSM
+from cdlib import viz, NodeClustering
+import networkx as nx
+import matplotlib.pyplot as plt
+from src.datatypes import Config, Matrix, MatrixOut
 
 
 def str_2_bool(value: str):
@@ -67,7 +69,7 @@ def build_config(file_name: str):
             ga_cfg['cluster_can_have_partial_source']))
 
 
-def dsm_to_graph(dsm: DSM, file_name: str):
+def dsm_to_graph(dsm: Matrix, file_name: str):
     """
     Generate Neo4j Cypher query to represent DSM as a graph
     """
@@ -90,3 +92,26 @@ def dsm_to_graph(dsm: DSM, file_name: str):
                 # f"({dsm.column_names[i]})-[:WRITE {{weight: {1/row_sum}}}]->({dsm.column_names[i]}),\n")
                 f"('{dsm.column_names[i]}','{dsm.column_names[i]}', {{'weight': {1/row_sum}}}),\n")
         file.write(';\n')
+
+
+def plot_overlapping_clusters(dsm: Matrix, n: int, nodes: list[str], square_clusters: MatrixOut, file_name: str):
+    """
+    Plot square cluster membership on a graph 
+    """
+    edges: list[tuple[str, str]] = []
+    for i in range(n):
+        for j in range(n):
+            if dsm[i][j] == 1:
+                edges.append((nodes[i], nodes[j]))
+
+    G = nx.Graph()
+    G.add_nodes_from(nodes)
+    G.add_edges_from(edges)
+
+    communities = NodeClustering(
+        square_clusters, G, method_name="DLTClust", overlap=True)
+
+    position = nx.kamada_kawai_layout(G, weight='weight', scale=1)
+    viz.plot_network_highlighted_clusters(
+        G, communities, position, node_size=275, plot_labels=True, edge_weights_intracluster=1, cmap='viridis')
+    plt.savefig(file_name)

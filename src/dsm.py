@@ -4,6 +4,7 @@ from src.mdl import MDL
 from src.bea import BEA
 import src.ga as ga
 from src.datatypes import Chromosome, Matrix, Population, ClusterNames, Clusters, ClusterType, MatrixOut, Fitness
+from src.util import plot_overlapping_clusters
 
 
 class DSM:
@@ -710,6 +711,8 @@ class DSM:
         Fitness
             Fitness score of the chromosome, No of Type I errors, No of Type II errors
         """
+        square_clusters: MatrixOut = []
+
         with open(self.output_file_name, 'w+', encoding="utf-8") as fd:
             fd.write(f'Fitness score,{fitness[0]}\n')
             fd.write(f'Type I errors,{fitness[1]}\n')
@@ -720,6 +723,7 @@ class DSM:
             for c in self.clusters:
                 if c[0] == ClusterType.SQUARE:
                     fd.write('Cluster,' + ','.join(c[1]) + '\n')
+                    square_clusters.append(c[1])
                 elif c[0] == ClusterType.BUS:
                     fd.write('Bus,' + ','.join(c[1]) + '\n')
                 elif c[0] == ClusterType.READER:
@@ -729,17 +733,23 @@ class DSM:
 
             fd.write('\n\nClustered DSM with all objects arranged using BEA\n')
             fd.write(',' + ','.join(self.CA_header) + '\n')
-            for i in range(len(self.CA)):
-                fd.write(self.CA_header[i] + ',' + ','.join(self.CA[i]) + '\n')
+            # for i in range(len(self.CA)):
+            for i, ca in enumerate(self.CA):
+                fd.write(self.CA_header[i] + ',' + ','.join(ca) + '\n')
 
             fd.write('\nClustered DSM with only objects in clusters\n')
             fd.write(',' + ','.join(self.D_out_header) + '\n')
 
-            for i in range(len(self.D_out)):
+            # for i in range(len(self.D_out)):
+            for i, out in enumerate(self.D_out):
                 fd.write(self.D_out_header[i] + ',' +
-                         ','.join(self.D_out[i]) + '\n')
+                         ','.join(out) + '\n')
 
             fd.close()
+
+        plot_file_name = self.output_file_name[:-3] + 'png'
+        plot_overlapping_clusters(
+            self.D, self.n, self.column_names, square_clusters, plot_file_name)
 
     def __arrange_D_using_BEA(self, nonoverlapping_clusters: Clusters,
                               overlapping_clusters: Clusters):
