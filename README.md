@@ -22,8 +22,9 @@ Party-party and party-data relationships should be encoded as binary Design Stru
 
 [2] is used sometimes to improve the layout of clustered representation.
 
-## Paper
-See our paper H.M.N. Dilum Bandara, Mark Staples, and Sidra Malik, "Designing for Shared Ledgers in Industry Ecosystems", URL for more details #TODO
+## Paper and Slides
+* H.M.N. Dilum Bandara, Mark Staples, and Sidra Malik. 2025. Designing for Shared Ledgers in Industry Ecosystems. Distrib. Ledger Technol. 0, 0, Article 0 (March 2025), [https://doi.org/10.1145/3724410](https://doi.org/10.1145/3724410)
+* [https://www.slideshare.net/slideshow/designing-for-multiple-blockchains-in-industry-ecosystems/277143445](Slides)
 
 ## How to Use
 
